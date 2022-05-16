@@ -24,3 +24,7 @@ def post_feed(topic: str, feed_id: int):
     for user_id in topics[topic]['users']:
         print(f'пользователь {user_id} получил новость {feed_id}')
 
+create_topic('IT')
+subscribe(123, 'IT')
+subscribe(145, 'IT')
+post_feed('IT', 91)
