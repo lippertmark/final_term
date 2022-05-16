@@ -5,6 +5,9 @@ import random
 CNT_GET_DATA = 0
 CNT_WRITE_TO_FILE = 0
 CNT_WRITE_TO_CONSOLE = 0
+list_get_data = {}
+list_write_to_console = {}
+list_write_to_file = {}
 
 
 def get_data(task_id):
@@ -19,11 +22,13 @@ def obr_get_data(task_id):
     get_data(task_id)
     CNT_GET_DATA -= 1
 
+
 def obr_write_to_console(task_id):
     global CNT_WRITE_TO_CONSOLE
     CNT_WRITE_TO_CONSOLE += 1
     write_to_console(task_id)
     CNT_WRITE_TO_CONSOLE -= 1
+
 
 def obr_write_to_file(task_id):
     global CNT_WRITE_TO_FILE
@@ -45,23 +50,23 @@ def write_to_console(task_id):
 
 
 def doing_smth(task_id):
-
-    gd = threading.Thread(target=obr_get_data, args=(task_id,))
+    list_get_data[task_id] = threading.Thread(target=obr_get_data, args=(task_id,))
     while CNT_GET_DATA > 10:
         time.sleep(1)
-    gd.start()
-    gd.join()
-    wf = threading.Thread(target=obr_write_to_file, args=(task_id,))
-    wc = threading.Thread(target=obr_write_to_console, args=(task_id,))
+    list_get_data[task_id].start()
+    list_get_data[task_id].join()
+    list_write_to_file[task_id] = threading.Thread(target=obr_write_to_file, args=(task_id,))
+    list_write_to_console[task_id] = threading.Thread(target=obr_write_to_console, args=(task_id,))
 
     while CNT_WRITE_TO_FILE > 5:
         time.sleep(1)
-    wf.start()
+    list_write_to_file[task_id].start()
     while CNT_WRITE_TO_CONSOLE > 1:
         time.sleep(1)
-    wc.start()
+    list_write_to_console[task_id].start()
 
 
+list_doing_smth = []
 for task_id in range(1, 21):
-    ds = threading.Thread(target=doing_smth, args=(task_id,))
-    ds.start()
+    list_doing_smth[task_id] = threading.Thread(target=doing_smth, args=(task_id,))
+    list_doing_smth[task_id].start()
